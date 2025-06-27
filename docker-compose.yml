@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - db-data:/data
+    command: >
+      sh -c "
+        if [ ! -f /data/prasetv.db ]; then
+          echo '[INIT] Creating DB from schema...';
+          sqlite3 /data/prasetv.db < /app/db/schema.sql;
+        fi &&
+        /app/server
+      "
+
+volumes:
+  db-data:

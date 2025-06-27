@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
@@ -14,7 +15,14 @@ import (
 func main() {
 	app := fiber.New()
 
-	dbConn := sqlx.MustConnect("sqlite3", "./prasetv.db")
+	app.Static("/", "./web")
+
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "./prasetv.db"
+	}
+	dbConn := sqlx.MustConnect("sqlite3", dbPath)
+
 	queries := db.New(dbConn)
 
 	app.Get("/api/bookmarks", api.ListBookmarks(queries))
