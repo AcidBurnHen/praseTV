@@ -1,7 +1,7 @@
 package api
 
 import (
-	db "prasetv-server/db/generated"
+	"prasetv-server/db"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -36,5 +36,20 @@ func DeleteBookmark(q *db.Queries) fiber.Handler {
 			return c.Status(500).SendString(err.Error())
 		}
 		return c.SendStatus(204)
+	}
+}
+
+func ImportBookmarks(q *db.Queries) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		var bookmarks []db.InsertBookmarkParams
+		if err := c.BodyParser(&bookmarks); err != nil {
+			return c.Status(400).SendString(err.Error())
+		}
+
+		for _, bm := range bookmarks {
+			_ = q.InsertBookmark(c.Context(), bm) // You can handle dupes better if needed
+		}
+
+		return c.SendStatus(201)
 	}
 }
