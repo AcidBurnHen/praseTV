@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "PraseTV Bookmark Sync",
+  "description": "Sync browser bookmarks to PraseTV",
+  "version": "1.0",
+  "permissions": ["bookmarks", "alarms"],
+  "host_permissions": ["http://localhost:3000/"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Sync bookmarks"
+  }
+}
