@@ -24,12 +24,37 @@ a {
 }
 
 .bookmark {
-    padding: 1.5rem 0.5rem;
+    padding-top: .6rem;
     border: 1px solid transparent;
     border-radius: 1rem;
     background-color: rgb(60, 60, 60);
+    display: flex;
+    gap: 0.4rem;
+    flex-direction: column;
+}
+
+.remove_bookmark {
+    margin-right: .6rem;
+    padding: .2rem .6rem;
+    background-color: #212121;
+    border: none; 
+    border-radius: 2rem;
+    color: white;
+    align-self: self-end;
+    text-align: center;
+}
+
+.remove_bookmark:hover {
+    cursor: pointer;
+    background-color: #dc4239;
+}
+
+.bookmark_url {
+    padding: .7rem 0.5rem 1.5rem 0.5rem;
     display: grid;
     grid-template-rows: 2;
+    border: 1px solid transparent;
+    border-radius: 2rem;
 
     gap: 1rem;
     align-content: center;
@@ -50,7 +75,11 @@ a {
     }
 }
 
-.bookmark:hover {
+
+.bookmark_url:hover {
     cursor: pointer;
-    border: 1px solid #dc4239;
+}
+
+.bookmark:has(.bookmark_url:hover) {
+  border: 1px solid #dc4239;
 }

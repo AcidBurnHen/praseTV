@@ -23,7 +23,7 @@ chrome.bookmarks.onCreated.addListener(() => {
 
 chrome.bookmarks.onChanged.addListener((id, changeInfo) => {
   console.log("Bookmark changed:", changeInfo);
-  syncBookmarks
+  syncBookmarks()
 });
 
 chrome.bookmarks.onRemoved.addListener((id, removeInfo) => {
@@ -36,13 +36,13 @@ syncBookmarks()
 
 // ---------------- Add bookmark context menu ----------------
 chrome.contextMenus.create({
-  id: "add_new_bookmark",
+  id: "add_new_bookmarker",
   title: "Add bookmark",
   contexts: ["all"],
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "add_new_bookmark") {
+  if (info.menuItemId === "add_new_bookmarker") {
     const targetUrl = info.linkUrl || tab.url;
     
     chrome.scripting.executeScript({
@@ -65,10 +65,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 chrome.runtime.onMessage.addListener((msg) => {
+  console.log("Got message: ", msg)
+
   if (msg.action === "createBookmark") {
     chrome.bookmarks.create({
       title: msg.title,
       url: msg.url
     });
+  } else if (msg.action === "deleteBookmark") {
+    console.log("Deleting through frontend")
+    chrome.bookmarks.remove(msg.id)
   }
 });
