@@ -24,8 +24,10 @@ async function syncBookmarks() {
 
     console.log("Flat: ", flat)
 
+    const importAPI = 'http://prase.tv/api/bookmarks/import'
     // try {
-      const res = await fetch("http://localhost:3000/api/bookmarks/import", {
+    console.log("Sending to : ", importAPI)
+      const res = await fetch(importAPI, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

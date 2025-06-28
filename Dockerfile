@@ -40,5 +40,4 @@ COPY --from=webbuild /app/web/dist /app/web
 RUN mkdir /data
 ENV DB_PATH=/data/prasetv.db
 
-EXPOSE 3000
 CMD ["/app/server"]

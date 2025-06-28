@@ -1,10 +1,10 @@
 version: "3.9"
 
 services:
-  app:
+  prasetv_app:
     build: .
-    ports:
-      - "3000:3000"
+    expose:
+      - 3000
     volumes:
       - db-data:/data
     command: >
@@ -15,6 +15,15 @@ services:
         fi &&
         /app/server
       "
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - prasetv_app
 
 volumes:
   db-data:

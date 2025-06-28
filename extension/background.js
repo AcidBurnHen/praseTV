@@ -2,7 +2,7 @@ importScripts("sync.js");
 
 
 function reloadPraseTV() {
-  chrome.tabs.query({url: ['http://localhost:3000/*', 'http://localhost:5173/*']}, 
+  chrome.tabs.query({url: ['http://localhost:9600/*', 'http://localhost:5173/*', 'http://prase.tv/']}, 
     (tabs) => {
       for (let i = 0; i < tabs.length; i++) {
         chrome.tabs.reload(tabs[i].id)
