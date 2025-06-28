@@ -17,32 +17,29 @@ function render(bookmarks: Bookmark[]) {
   const list = document.getElementById('bookmark-list')!
   list.innerHTML = ''
 
-  bookmarks.forEach((bookmark: Bookmark) => {
+  bookmarks.forEach((bookmark: Bookmark, idx) => {
+    console.log("IDX: ", idx)
     console.log("Book mark: ", bookmark)
     console.log("Bookmark Title: ", bookmark.Title)
-    const container = document.createElement('div')
+    const container = document.createElement('a')
+    container.id = `bookmark-${idx}`
+    container.classList.add('bookmark')
     const title = document.createElement('span')
     title.innerText = bookmark.Title
     
-    if (bookmark.Url) {
-      const url = document.createElement('a')
-      url.href = bookmark.Url 
+    
+    container.href = bookmark.Url 
 
-      const [faviconOriginal, faviconAlternative] = getFaviconUrls(bookmark.Url)
-      if (faviconOriginal !== null) {
-        const img = document.createElement('img')
-        img.width = 30
-        img.height = 30
-        img.src = faviconOriginal 
-        url.appendChild(img) 
-      } 
+    const [faviconOriginal, faviconAlternative] = getFaviconUrls(bookmark.Url)
+    if (faviconOriginal !== null) {
+      const img = document.createElement('img')
+      img.width = 50
+      img.height = 50
+      img.src = faviconOriginal 
+      container.appendChild(img) 
+    } 
 
-      url.appendChild(title)
-      container.appendChild(url)
-
-    } else {
-      container.appendChild(title)
-    }
+    container.appendChild(title)
     
     list.appendChild(container)
   })
