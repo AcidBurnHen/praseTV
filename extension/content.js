@@ -7,3 +7,10 @@ window.addEventListener('message', (event) => {
     chrome.runtime.sendMessage({ action: 'deleteBookmark', id: msg.id });
   }
 });
+
+document.addEventListener('keydown', (e) => {
+  console.log("E: ", e.key)
+  if (e.key === 'Home') {
+    chrome.runtime.sendMessage({ action: 'focusPraseTab' });
+  }
+});

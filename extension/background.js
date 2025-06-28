@@ -11,6 +11,20 @@ function reloadPraseTV() {
   )
 }
 
+function focusPraseTVTab() {
+  chrome.tabs.query({url: ['http://localhost:9600/*', 'http://localhost:5173/*', 'http://prase.tv/']},
+    (tabs) => {
+      if (tabs.length > 0) {
+        const tab = tabs[0]
+        chrome.tabs.update(tab.id, { active: true })
+        chrome.windows.update(tab.windowId, { focused: true })
+      } else {
+        chrome.tabs.create({ url: 'http://prase.tv/' })
+      }
+    }
+  )
+}
+
 // ---------------- Bookmark listeners ----------------
 chrome.bookmarks.onCreated.addListener(() => {
   console.log("Bookmark added");
@@ -73,5 +87,7 @@ chrome.runtime.onMessage.addListener((msg) => {
     });
   } else if (msg.action === "deleteBookmark") {
     chrome.bookmarks.remove(msg.id)
+  } else if (msg.action === "focusPraseTab") {
+    focusPraseTVTab() 
   }
 });
