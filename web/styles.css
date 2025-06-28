@@ -1,4 +1,8 @@
-body, :root {
+:root {
+    --col-primary: #dc4239;
+}
+
+body {
     margin: 0;
     padding: 0;
     background-color: #211f1d;
@@ -14,6 +18,27 @@ a {
     width: 100%;
     align-content: center;
     justify-content: center;
+}
+
+.search_container {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.search_container input {
+    width: 50%;
+    max-width: 400px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    background-color: #141312;
+    color: white; 
+}
+
+.search_container input:focus-visible {
+    outline: none;
+    box-shadow: 2px 2px 8px #1e1312;
 }
 
 .bookmarks_container {
@@ -47,7 +72,7 @@ a {
 
 .remove_bookmark:hover {
     cursor: pointer;
-    background-color: #dc4239;
+    background-color: var(--col-primary);
 }
 
 .bookmark_url {
@@ -82,7 +107,7 @@ a {
 }
 
 .bookmark:has(.bookmark_url:hover) {
-  border: 1px solid #dc4239;
+  border: 1px solid var(--col-primary);
 }
 
 .active_focus {

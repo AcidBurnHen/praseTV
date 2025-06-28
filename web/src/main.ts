@@ -2,6 +2,27 @@ import { fetchBookmarks } from './bookmarks'
 import type { Bookmark } from './bookmarks'
 
 
+let allBookmarks: Bookmark[] = []
+const searchInput = document.getElementById('bookmark-search') as HTMLInputElement
+
+function renderBookmarksWithFilters() {
+  const query = searchInput.value.trim().toLowerCase()
+  if (!query) {
+    render(allBookmarks)
+    return
+  }
+  const filtered = allBookmarks.filter((b) =>
+    b.Title.toLowerCase().includes(query) || b.Url.toLowerCase().includes(query)
+  )
+
+  if (filtered.length !== totalElements) {
+    render(filtered)
+  }
+}
+
+searchInput.addEventListener('input', renderBookmarksWithFilters)
+
+
 function getFaviconUrls(bookmarkUrl: string) {
   const { origin } = new URL(bookmarkUrl);
   if (!origin) {
@@ -65,6 +86,10 @@ function handleKeyboardControls (e: KeyboardEvent) {
       }
            
       window.postMessage({ action: 'deleteBookmark', id: focusedElement.dataset.bId }, '*')
+
+      const deletedId = focusedElement.dataset.bId
+      allBookmarks = allBookmarks.filter(b => String(b.ID) !== deletedId)
+
       let oldIdx = Number(focusedElement.dataset.idx)
       focusedElement.remove()
       totalElements--
@@ -188,6 +213,9 @@ window.addEventListener('keydown', handleKeyboardControls)
 function render(bookmarks: Bookmark[]) {
   // console.log("BOokmarks: ", bookmarks)
 
+  focusedElement = null
+  totalElements = 0
+
   const list = document.getElementById('bookmark-list')!
   list.innerHTML = ''
 
@@ -208,6 +236,8 @@ function render(bookmarks: Bookmark[]) {
       window.postMessage({ action: 'deleteBookmark', id: bookmark.ID }, '*')
       container.remove()
       totalElements--
+
+      allBookmarks = allBookmarks.filter(b => b.ID !== bookmark.ID)
 
       reorderIdxOnBookmarks()
     }
@@ -250,6 +280,11 @@ function render(bookmarks: Bookmark[]) {
 
 }
 
-fetchBookmarks().then(render).catch(err => {
-  console.error('Failed to load bookmarks:', err)
-})
+fetchBookmarks()
+  .then((bm) => {
+    allBookmarks = bm
+    renderBookmarksWithFilters()
+  })
+  .catch((err) => {
+    console.error('Failed to load bookmarks:', err)
+  })
