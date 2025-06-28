@@ -12,20 +12,6 @@ function reloadPraseTV() {
 }
 
 // ---------------- Bookmark listeners ----------------
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.alarms.create("syncBookmarks", { periodInMinutes: 30 });
-
-  console.log("Set sync")
-});
-
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === "syncBookmarks") {
-    console.log("Alarm ran")
-    syncBookmarks();
-  }
-});
-
-
 chrome.bookmarks.onCreated.addListener(() => {
   console.log("Bookmark added");
   syncBookmarks();
@@ -86,7 +72,6 @@ chrome.runtime.onMessage.addListener((msg) => {
       url: msg.url
     });
   } else if (msg.action === "deleteBookmark") {
-    console.log("Deleting through frontend")
     chrome.bookmarks.remove(msg.id)
   }
 });

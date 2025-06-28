@@ -83,3 +83,7 @@ a {
 .bookmark:has(.bookmark_url:hover) {
   border: 1px solid #dc4239;
 }
+
+.active_focus {
+    border: 3px solid blue;
+}

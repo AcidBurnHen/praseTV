@@ -11,6 +11,142 @@ function getFaviconUrls(bookmarkUrl: string) {
   return [`${origin}/favicon.ico`, `https://www.google.com/s2/favicons?sz=64&domain=${origin}`];
 }
 
+let focusedElement: HTMLElement  | null = null 
+let totalElements = 0
+
+function getFocusedElementUrl(): null | string {
+  if (!focusedElement) {
+    return null 
+  }
+
+  const url = focusedElement.querySelector('a[href]')
+  if (!url || !url.getAttribute('href')) {
+    return null 
+  }
+
+  return url.getAttribute('href')
+}
+
+function toggleFocusedElement(elementToFocus: HTMLElement) {
+  if (focusedElement) {
+    focusedElement.classList.remove('active_focus')
+  }
+
+  focusedElement = elementToFocus
+  focusedElement.classList.add('active_focus')
+}
+
+function handleKeyboardControls (e: KeyboardEvent) {
+  if (!focusedElement && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+    const firstELement = document.getElementById('bookmark-0')
+    if (firstELement) {
+      toggleFocusedElement(firstELement)
+    }
+  }
+
+  switch (e.key) {
+    case 'Enter': { 
+      const url = getFocusedElementUrl()
+      if (!url) {
+        break 
+      }
+
+      window.open(url, '_blank')
+      
+      break 
+    }
+    case 'ArrowUp': {
+      if (!focusedElement) {
+        break 
+      }
+
+      const idx = Number(focusedElement.dataset.idx)
+      if (idx < 4) {
+        break; 
+      }
+      console.log("Up")
+
+      const newIdx = idx - 4
+      const newElementToFocus = document.getElementById(`bookmark-${newIdx}`)
+      if (newElementToFocus) {
+        toggleFocusedElement(newElementToFocus)
+      }
+
+      break
+    }
+    case 'ArrowDown': {
+      if (!focusedElement) {
+        break 
+      }
+
+      const idx = Number(focusedElement.dataset.idx)
+      const gridCount = Number(Math.ceil(totalElements / 4))
+      
+      let missingElements = 0
+      if ((totalElements / 4) < gridCount) {
+        missingElements = totalElements % 4 
+      }
+
+      const lastColumn = (totalElements + missingElements) - 4
+
+      if (idx >= lastColumn) {
+        break 
+      }
+
+      let newIdx = idx + 4
+
+      if (newIdx >= totalElements && newIdx < totalElements + missingElements) {
+        newIdx = newIdx - missingElements;
+      } 
+
+      const newElementToFocus = document.getElementById(`bookmark-${newIdx}`)
+      if (newElementToFocus) {
+        toggleFocusedElement(newElementToFocus)
+      }
+
+      break 
+    }
+    case 'ArrowLeft': {
+      if (!focusedElement) {
+        break 
+      }
+
+      const idx = Number(focusedElement.dataset.idx)
+      if (idx < 1) {
+        break; 
+      }
+
+      const newIdx = idx - 1
+      const newElementToFocus = document.getElementById(`bookmark-${newIdx}`)
+      if (newElementToFocus) {
+        toggleFocusedElement(newElementToFocus)
+      }
+
+      break
+    }
+    case 'ArrowRight': {
+      if (!focusedElement) {
+        break 
+      }
+
+      const idx = Number(focusedElement.dataset.idx)
+      if (idx >= totalElements - 1) {
+        break; 
+      }
+
+      const newIdx = idx + 1
+      const newElementToFocus = document.getElementById(`bookmark-${newIdx}`)
+      if (newElementToFocus) {
+        toggleFocusedElement(newElementToFocus)
+      }
+
+      break
+    }
+  }
+}
+
+window.addEventListener('keydown', handleKeyboardControls)
+
 function render(bookmarks: Bookmark[]) {
   // console.log("BOokmarks: ", bookmarks)
 
@@ -24,6 +160,7 @@ function render(bookmarks: Bookmark[]) {
     // ~ Container ~ 
     const container = document.createElement('div')
     container.id = `bookmark-${idx}`
+    container.dataset.idx = String(idx)
     container.classList.add('bookmark')
 
     // ~ Delete button ~ // 
@@ -60,6 +197,7 @@ function render(bookmarks: Bookmark[]) {
     urlContainer.appendChild(title)
     container.appendChild(urlContainer)
 
+    totalElements++
     list.appendChild(container)
   })
 
