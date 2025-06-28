@@ -67,3 +67,18 @@ func (q *Queries) ListBookmarks(ctx context.Context) ([]Bookmark, error) {
 	}
 	return items, nil
 }
+
+const updateBookmark = `-- name: UpdateBookmark :exec
+UPDATE bookmarks SET title = ?, url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?
+`
+
+type UpdateBookmarkParams struct {
+	Title string
+	Url   string
+	ID    string
+}
+
+func (q *Queries) UpdateBookmark(ctx context.Context, arg UpdateBookmarkParams) error {
+	_, err := q.db.ExecContext(ctx, updateBookmark, arg.Title, arg.Url, arg.ID)
+	return err
+}

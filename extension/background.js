@@ -1,6 +1,6 @@
 importScripts("sync.js");
 
-// ------------------- Bookmark listeners 
+// ---------------- Bookmark listeners ----------------
 chrome.runtime.onInstalled.addListener(() => {
   chrome.alarms.create("syncBookmarks", { periodInMinutes: 30 });
 
@@ -34,7 +34,7 @@ chrome.bookmarks.onRemoved.addListener((id, removeInfo) => {
 syncBookmarks()
 
 
-// ---------------- Add bookmark context menu 
+// ---------------- Add bookmark context menu ----------------
 chrome.contextMenus.create({
   id: "add_new_bookmark",
   title: "Add bookmark",
