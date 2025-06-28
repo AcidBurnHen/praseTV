@@ -36,6 +36,19 @@ function toggleFocusedElement(elementToFocus: HTMLElement) {
   focusedElement.classList.add('active_focus')
 }
 
+function reorderIdxOnBookmarks() {
+  const allBookmarks = document.querySelectorAll("#bookmark-list .bookmark")
+  if (!allBookmarks) {
+    return 
+  }
+
+  for (let i = 0; i < allBookmarks.length; i++) {
+    const bookmark = allBookmarks[i] as HTMLElement;
+    bookmark.dataset.idx = String(i);
+    bookmark.setAttribute('id', `bookmark-${i}`)
+  }
+}
+
 function handleKeyboardControls (e: KeyboardEvent) {
   if (!focusedElement && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
     const firstELement = document.getElementById('bookmark-0')
@@ -44,7 +57,33 @@ function handleKeyboardControls (e: KeyboardEvent) {
     }
   }
 
+  console.log("Key: ", e.key)
   switch (e.key) {
+    case 'Delete': {
+      if (!focusedElement) {
+        break 
+      }
+           
+      window.postMessage({ action: 'deleteBookmark', id: focusedElement.dataset.bId }, '*')
+      let oldIdx = Number(focusedElement.dataset.idx)
+      focusedElement.remove()
+      totalElements--
+
+      reorderIdxOnBookmarks()
+
+      if (oldIdx >= totalElements) {
+        oldIdx = totalElements - 1    
+      } 
+
+      const newElementToFocus = document.querySelector(`#bookmark-${oldIdx}`) as HTMLElement
+      console.log("new focused element: ", newElementToFocus)
+      if (newElementToFocus) {
+        toggleFocusedElement(newElementToFocus)
+      }
+
+
+      break
+    }
     case 'Enter': { 
       const url = getFocusedElementUrl()
       if (!url) {
@@ -64,7 +103,6 @@ function handleKeyboardControls (e: KeyboardEvent) {
       if (idx < 4) {
         break; 
       }
-      console.log("Up")
 
       const newIdx = idx - 4
       const newElementToFocus = document.getElementById(`bookmark-${newIdx}`)
@@ -154,13 +192,11 @@ function render(bookmarks: Bookmark[]) {
   list.innerHTML = ''
 
   bookmarks.forEach((bookmark: Bookmark, idx) => {
-    console.log("IDX: ", idx)
-    console.log("Book mark: ", bookmark)
-    console.log("Bookmark Title: ", bookmark.Title)
     // ~ Container ~ 
     const container = document.createElement('div')
     container.id = `bookmark-${idx}`
     container.dataset.idx = String(idx)
+    container.dataset.bId = String(bookmark.ID)
     container.classList.add('bookmark')
 
     // ~ Delete button ~ // 
@@ -171,6 +207,9 @@ function render(bookmarks: Bookmark[]) {
       e.preventDefault()
       window.postMessage({ action: 'deleteBookmark', id: bookmark.ID }, '*')
       container.remove()
+      totalElements--
+
+      reorderIdxOnBookmarks()
     }
 
     container.appendChild(deleteButton)
@@ -185,13 +224,21 @@ function render(bookmarks: Bookmark[]) {
     
     urlContainer.href = bookmark.Url 
 
-    const [faviconOriginal] = getFaviconUrls(bookmark.Url)
+    const [faviconOriginal, faviconAlternative] = getFaviconUrls(bookmark.Url)
     if (faviconOriginal !== null) {
       const img = document.createElement('img')
       img.width = 50
       img.height = 50
       img.src = faviconOriginal 
       urlContainer.appendChild(img) 
+
+      if (faviconAlternative !== null) {
+        img.onerror = () => {
+          img.onerror = null 
+          img.src = faviconAlternative
+        }
+      }
+
     } 
 
     urlContainer.appendChild(title)
