@@ -1,4 +1,4 @@
-# ─── Build frontend ───────────────────────────────────────────────────────────
+# ─── Build frontend ───
 FROM node:20-bookworm AS webbuild
 WORKDIR /app/web
 COPY web/package.json web/pnpm-lock.yaml ./
@@ -8,7 +8,7 @@ COPY web/ ./
 RUN pnpm run build
 
 
-# ─── Build backend ────────────────────────────────────────────────────────────
+# ─── Build backend ───
 FROM golang:1.24.4 AS gobuild
 WORKDIR /app/server
 COPY server/go.mod server/go.sum ./
@@ -21,7 +21,7 @@ RUN go build -o /app/bin/server
 RUN mkdir -p /app/db && cp db/schema.sql /app/db/
 
 
-# ─── Runtime image ────────────────────────────────────────────────────────────
+# ─── Runtime image ───
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates sqlite3 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app

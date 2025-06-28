@@ -1,8 +1,8 @@
 export type Bookmark = {
-  id: string
-  title: string
-  url: string | null
-  parent_id: string | null
+  ID: string
+  Title: string
+  Url: string | null
+  ParentID: string | null
 }
 
 export async function fetchBookmarks(): Promise<Bookmark[]> {
