@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/json"
+	"fmt"
 	"prasetv-server/db"
 
 	"github.com/gofiber/fiber/v2"
@@ -9,6 +11,7 @@ import (
 func ListBookmarks(q *db.Queries) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		bookmarks, err := q.ListBookmarks(c.Context())
+		fmt.Println("Bookmarks: ", bookmarks)
 		if err != nil {
 			return c.Status(500).SendString(err.Error())
 		}
@@ -41,13 +44,26 @@ func DeleteBookmark(q *db.Queries) fiber.Handler {
 
 func ImportBookmarks(q *db.Queries) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		fmt.Println("Importing")
+
+		body := c.Body()
+		fmt.Println("Raw body:", string(body)) // see the raw JSON you're receiving
+
 		var bookmarks []db.InsertBookmarkParams
-		if err := c.BodyParser(&bookmarks); err != nil {
-			return c.Status(400).SendString(err.Error())
+
+		if err := json.Unmarshal(body, &bookmarks); err != nil {
+			fmt.Println("Unmarshal error:", err)
+			return c.Status(400).SendString("Invalid JSON: " + err.Error())
 		}
 
+		fmt.Printf("Parsed bookmarks: %+v\n", bookmarks)
+
 		for _, bm := range bookmarks {
-			_ = q.InsertBookmark(c.Context(), bm) // You can handle dupes better if needed
+			fmt.Printf("Inserting: %+v\n", bm)
+			if err := q.InsertBookmark(c.Context(), bm); err != nil {
+				fmt.Printf("Insert failed: %v\n", err)
+				// optionally return 500 or continue
+			}
 		}
 
 		return c.SendStatus(201)

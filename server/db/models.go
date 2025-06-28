@@ -11,7 +11,7 @@ import (
 type Bookmark struct {
 	ID        string
 	Title     string
-	Url       sql.NullString
+	Url       string
 	ParentID  sql.NullString
 	CreatedAt sql.NullTime
 	UpdatedAt sql.NullTime

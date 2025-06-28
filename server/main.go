@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
@@ -19,9 +21,17 @@ func main() {
 
 	dbPath := os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "./prasetv.db"
+		dbPath = "prasetv.db"
 	}
-	dbConn := sqlx.MustConnect("sqlite3", dbPath)
+
+	absPath, err := filepath.Abs(dbPath)
+	if err != nil {
+		fmt.Println("Failed to resolve absolute path:", err)
+	} else {
+		fmt.Println("Using database at:", absPath)
+	}
+
+	dbConn := sqlx.MustConnect("sqlite3", absPath)
 
 	queries := db.New(dbConn)
 

@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const deleteBookmark = `-- name: DeleteBookmark :exec
@@ -20,24 +19,18 @@ func (q *Queries) DeleteBookmark(ctx context.Context, id string) error {
 }
 
 const insertBookmark = `-- name: InsertBookmark :exec
-INSERT INTO bookmarks (id, title, url, parent_id)
-VALUES (?, ?, ?, ?)
+INSERT INTO bookmarks (id, title, url)
+VALUES (?, ?, ?)
 `
 
 type InsertBookmarkParams struct {
-	ID       string
-	Title    string
-	Url      sql.NullString
-	ParentID sql.NullString
+	ID    string
+	Title string
+	Url   string
 }
 
 func (q *Queries) InsertBookmark(ctx context.Context, arg InsertBookmarkParams) error {
-	_, err := q.db.ExecContext(ctx, insertBookmark,
-		arg.ID,
-		arg.Title,
-		arg.Url,
-		arg.ParentID,
-	)
+	_, err := q.db.ExecContext(ctx, insertBookmark, arg.ID, arg.Title, arg.Url)
 	return err
 }
 
