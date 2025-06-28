@@ -1,5 +1,16 @@
 importScripts("sync.js");
 
+
+function reloadPraseTV() {
+  chrome.tabs.query({url: ['http://localhost:3000/*', 'http://localhost:5173/*']}, 
+    (tabs) => {
+      for (let i = 0; i < tabs.length; i++) {
+        chrome.tabs.reload(tabs[i].id)
+      }
+    }
+  )
+}
+
 // ---------------- Bookmark listeners ----------------
 chrome.runtime.onInstalled.addListener(() => {
   chrome.alarms.create("syncBookmarks", { periodInMinutes: 30 });
@@ -18,6 +29,8 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 chrome.bookmarks.onCreated.addListener(() => {
   console.log("Bookmark added");
   syncBookmarks();
+
+  reloadPraseTV()
 });
 
 
