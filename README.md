@@ -47,6 +47,45 @@ All data stays local and is served from SQLite. There are no external API calls.
 
 ![Screenshot](screenshot.png)
 
+
+## Keyboard controls
+
+The application supports a few keyboard shortcuts for quick navigation. In the
+web interface you can move around the bookmark grid using the arrow keys. When
+an item is selected:
+
+- **Enter** opens the focused bookmark in a new tab.
+- **Delete** removes the bookmark and selects the next one.
+- **Arrow Up/Down/Left/Right** switch the focus between bookmarks.
+  When no bookmark is focused pressing any arrow key will select the first
+  bookmark automatically.
+
+The browser extension also listens for the **Home** key. Pressing it focuses the
+open prase.tv tab or opens a new one if none exists.
+
+
+## Bonus: Want to use it as `prase.tv` instead of `localhost`?
+
+You can fake the domain locally using the magic of `/etc/hosts`. On Linux (or macOS), just add this line:
+
+```bash
+sudo nano /etc/hosts
+```
+
+Then add at the bottom:
+```
+127.0.0.1    prase.tv
+```
+
+(Or you can set up dnsmasq)
+
+Now you can open your browser and visit:\
+👉 [**http://prase.tv**](http://prase.tv)
+
+Way fancier than `localhost`, and your couch setup will thank you.\
+*Optional: set your browser to auto-launch in kiosk mode for the full TV app experience.*
+
+
 ## Contributing
 Pull requests are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details. Whether it’s backend features, new UI ideas or extension tweaks—feel free to jump in.
 
