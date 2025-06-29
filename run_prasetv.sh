@@ -118,7 +118,20 @@ open_browser() {
         &
 }
 
+
+# Ensure there's a local host entry on new machine 
+ensure_local_host_mapping_exists() {
+    local host_entry="127.0.0.1 prase.tv"
+
+    if ! grep -qF "prase.tv" /etc/hosts; then
+        echo "Adding prase.tv to /etc/hosts..."
+        echo "$host_entry" | sudo tee -a /etc/hosts > /dev/null
+    fi
+}
+
+
 choose_browser
+ensure_local_host_mapping_exists
 install_docker
 run_compose
 echo "Waiting for server to start..."
