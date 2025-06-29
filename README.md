@@ -63,6 +63,19 @@ an item is selected:
 The browser extension also listens for the **Home** key. Pressing it focuses the
 open prase.tv tab or opens a new one if none exists.
 
+Navigating the browser tabs? 
+
+Use the browser’s built-in tab navigation:
+
+- `Ctrl + Tab` → Next tab
+- `Ctrl + Shift + Tab` → Previous tab
+- `Ctrl + W` → Close tab
+- `Ctrl + 1` -> You can directly navigate to a tab by giving the tab index (starts from 1)
+
+prase.tv doesn’t override default shortcuts, or tries to mimick their functionality. 
+
+Only `Home` is repurposed (returns to prase.tv inside the extension, and only works outside editable elements, so it doesn't disturb you if you are typing some text).
+
 ## Add bookmark 
 Once installed, the extension adds an "Add bookmark" option to the right-click (context) menu on any webpage. 
 

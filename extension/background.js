@@ -25,6 +25,8 @@ function focusPraseTVTab() {
   )
 }
 
+
+
 // ---------------- Bookmark listeners ----------------
 chrome.bookmarks.onCreated.addListener(() => {
   console.log("Bookmark added");
@@ -80,14 +82,21 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.runtime.onMessage.addListener((msg) => {
   console.log("Got message: ", msg)
 
-  if (msg.action === "createBookmark") {
-    chrome.bookmarks.create({
-      title: msg.title,
-      url: msg.url
-    });
-  } else if (msg.action === "deleteBookmark") {
-    chrome.bookmarks.remove(msg.id)
-  } else if (msg.action === "focusPraseTab") {
-    focusPraseTVTab() 
+  switch (msg.action) {
+    case "createBookmark": {
+      chrome.bookmarks.create({
+        title: msg.title,
+        url: msg.url
+      });
+      break;
+    }
+    case "deleteBookmark": {
+      chrome.bookmarks.remove(msg.id);
+      break;
+    }
+    case "focusPraseTab": {
+      focusPraseTVTab();
+      break;
+    }
   }
 });

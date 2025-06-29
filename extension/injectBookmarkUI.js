@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((msg) => {
         font-size: 13px;
         color: white;
         padding: 16px;
-        z-index: 999999;
+        z-index: calc(9999999999 * 100);
         display: flex;
         gap: 16px;
         backdrop-filter: blur(8px);
