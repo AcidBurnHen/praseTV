@@ -115,6 +115,38 @@ Now you can open your browser and visit:\
 Way fancier than `localhost`, and your couch setup will thank you.\
 *Optional: set your browser to auto-launch in kiosk mode for the full TV app experience.*
 
+## Auto-start on boot
+
+If you want prase.tv to run automatically after a reboot, create a systemd service that points to `run_prasetv.sh`. Assuming the repository lives in `/opt/prase.tv`, the service file could look like:
+
+```ini
+# /etc/systemd/system/prasetv.service
+[Unit]
+Description=Start prase.tv at boot
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=yourusername
+Group=yourusername
+WorkingDirectory=/opt/prase.tv
+ExecStart=/opt/prase.tv/run_prasetv.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable it with:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now prasetv.service
+```
+
+
 
 ## Contributing
 Pull requests are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for details. Whether it’s backend features, new UI ideas or extension tweaks—feel free to jump in.
