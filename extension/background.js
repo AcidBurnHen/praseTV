@@ -25,6 +25,17 @@ function focusPraseTVTab() {
   )
 }
 
+function openBookmark(url) {
+  chrome.tabs.query({ url }, (tabs) => {
+    if (tabs.length > 0) {
+      const tab = tabs[0]
+      chrome.tabs.update(tab.id, { active: true })
+      chrome.windows.update(tab.windowId, { focused: true })
+    } else {
+      chrome.tabs.create({ url })
+    }
+  })
+}
 
 
 // ---------------- Bookmark listeners ----------------
@@ -96,6 +107,10 @@ chrome.runtime.onMessage.addListener((msg) => {
     }
     case "focusPraseTab": {
       focusPraseTVTab();
+      break;
+    }
+    case "openBookmark": {
+      openBookmark(msg.url);
       break;
     }
   }

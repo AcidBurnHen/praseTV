@@ -115,7 +115,7 @@ function handleKeyboardControls (e: KeyboardEvent) {
         break 
       }
 
-      window.open(url, '_blank')
+      window.postMessage({ action: 'openBookmark', url }, '*')
       
       break 
     }
@@ -253,6 +253,11 @@ function render(bookmarks: Bookmark[]) {
     
     
     urlContainer.href = bookmark.Url 
+    urlContainer.onclick = (e: Event) => {
+      e.preventDefault()
+
+      window.postMessage({ action: 'openBookmark', url: bookmark.Url }, '*')
+    }
 
     const [faviconOriginal, faviconAlternative] = getFaviconUrls(bookmark.Url)
     if (faviconOriginal !== null) {

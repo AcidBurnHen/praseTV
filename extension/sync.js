@@ -5,8 +5,6 @@ function flattenBookmarks(nodes, result = []) {
       flattenBookmarks(node.children, result);
     }
     else if (node.url || node.title) {
-      console.log("Node: ", node)
-
       result.push({
         id: node.id,
         title: node.title || "",
@@ -25,8 +23,7 @@ async function syncBookmarks() {
     console.log("Flat: ", flat)
 
     const importAPI = 'http://prase.tv/api/bookmarks/import'
-    // try {
-    console.log("Sending to : ", importAPI)
+    try {
       const res = await fetch(importAPI, {
         method: "POST",
         headers: {
@@ -35,12 +32,12 @@ async function syncBookmarks() {
         body: JSON.stringify(flat)
       });
 
-      console.log("Res: ", res)
+      // console.log("Res: ", res)
 
       if (!res.ok) throw new Error(`Sync failed: ${res.status}`);
       console.log("Bookmarks synced!");
-    // } catch (err) {
-    //   console.error("Failed to sync bookmarks:", err);
-    // }
+    } catch (err) {
+      console.error("Failed to sync bookmarks:", err);
+    }
   });
 }

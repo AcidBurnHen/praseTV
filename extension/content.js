@@ -13,9 +13,20 @@ window.addEventListener('message', (event) => {
   if (event.source !== window) return;
 
   const msg = event.data;
-  console.log("Got message: ", msg)
-  if (msg?.action === 'deleteBookmark') {
-    chrome.runtime.sendMessage({ action: 'deleteBookmark', id: msg.id });
+  if (!msg.action) {
+    return 
+  }
+
+  // console.log("Got message: ", msg)
+  switch (msg.action) {
+    case 'deleteBookmark': {
+      chrome.runtime.sendMessage({ action: 'deleteBookmark', id: msg.id })
+      break 
+    }
+    case 'openBookmark': {
+       chrome.runtime.sendMessage({ action: 'openBookmark', url: msg.url })
+       break
+    }
   }
 });
 
