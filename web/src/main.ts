@@ -53,7 +53,6 @@ function handleInputKeyboardControls(e: KeyboardEvent) {
 }
 
 searchInput.addEventListener('focus', () => {
-  searchInput.focus()
   toggleFocusedElement(searchInput)
 })
 
@@ -90,6 +89,10 @@ function getFocusedElementUrl(): null | string {
 }
 
 function toggleFocusedElement(elementToFocus: HTMLElement) {
+  if (focusedElement === elementToFocus) {
+    return 
+  }
+
   if (focusedElement) {
     focusedElement.classList.remove('active_focus')
     focusedElement.blur()
