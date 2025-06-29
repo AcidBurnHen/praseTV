@@ -146,6 +146,57 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now prasetv.service
 ```
 
+## 🔌 How to Stop prase.tv
+
+When you run `./run_prasetv.sh`, it starts everything in the background — even if you close the terminal. That includes:
+
+- A local web server (via Docker)
+- A full-screen browser window (kiosk mode)
+
+If you want to shut it down completely:
+
+### Easiest, with helper
+
+When you run `stop_prasetv.sh` it will stop the background services
+
+```bash
+chmod +x stop_prasetv.sh
+./stop_prasetv.sh
+```
+
+---
+
+### Easy way (from project folder)
+
+```bash
+docker compose down
+```
+
+That stops both the web server and the nginx proxy.
+
+---
+
+###  Manual way (if you're not in the project folder)
+
+```bash
+docker stop prasetv-prasetv_app-1 prasetv-nginx-1
+docker rm prasetv-prasetv_app-1 prasetv-nginx-1
+```
+
+This force-stops and removes both containers.
+
+---
+
+
+## ⚠️ Heads-up: This runs in the background
+
+Once started, prase.tv stays alive in the background:
+
+- Docker containers keep running until you shut them down
+- The browser will stay open until you close it manually
+- You can always stop everything with `docker compose down`
+
+Nothing weird, just don’t forget it’s running if you're testing stuff or switching configs.
 
 
 ## Contributing
