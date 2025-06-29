@@ -63,6 +63,12 @@ an item is selected:
 The browser extension also listens for the **Home** key. Pressing it focuses the
 open prase.tv tab or opens a new one if none exists.
 
+## Add bookmark 
+Once installed, the extension adds an "Add bookmark" option to the right-click (context) menu on any webpage. 
+
+This action uses Chrome's native bookmark API behind the scenes—so anything you bookmark this way automatically syncs with prase.tv.
+
+You can keep using Chrome like you normally would, and prase.tv will stay in sync with your bookmarks seamlessly.
 
 ## Bonus: Want to use it as `prase.tv` instead of `localhost`?
 
