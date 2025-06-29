@@ -17,27 +17,33 @@ function flattenBookmarks(nodes, result = []) {
 
 async function syncBookmarks() {
   chrome.bookmarks.getTree(async (tree) => {
-    console.log("Tree: ", tree)
+    console.log("Tree:", tree);
     const flat = flattenBookmarks(tree);
 
-    console.log("Flat: ", flat)
+    const endpoints = [
+      'http://prase.tv/api/bookmarks/import',
+      'http://localhost:3000/api/bookmarks/import'
+    ];
 
-    const importAPI = 'http://prase.tv/api/bookmarks/import'
-    try {
-      const res = await fetch(importAPI, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(flat)
-      });
+    for (const url of endpoints) {
+      console.log("Pinging url: ", url)
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(flat)
+        });
 
-      // console.log("Res: ", res)
-
-      if (!res.ok) throw new Error(`Sync failed: ${res.status}`);
-      console.log("Bookmarks synced!");
-    } catch (err) {
-      console.error("Failed to sync bookmarks:", err);
+        if (!res.ok) throw new Error(`Sync failed: ${res.status}`);
+        console.log(`Bookmarks synced via ${url}`);
+        return;
+      } catch (err) {
+        console.warn(`Sync failed at ${url}:`, err.message);
+      }
     }
+
+    console.error("All sync attempts failed.");
   });
 }

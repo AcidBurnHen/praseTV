@@ -36,11 +36,10 @@ document.addEventListener('keydown', (e) => {
     return 
   }
 
-  console.log("E: ", e.key)
-    switch (e.key) {
-      case 'Home': {
-        chrome.runtime.sendMessage({ action: 'focusPraseTab' });
-        break;
-      }
+  switch (e.key) {
+    case 'Home': {
+      chrome.runtime.sendMessage({ action: 'focusPraseTab' });
+      break;
+    }
   }
 });

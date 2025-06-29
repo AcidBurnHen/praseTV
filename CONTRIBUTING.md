@@ -22,7 +22,8 @@ Thank you for considering contributing to **prase.tv**! This project welcomes pu
 
    In /server run
    ```bash
-   make -C server run
+   make build
+   make run 
    ```
 4. Browse to `http://localhost:3000` for the API and `http://localhost:5173` for the web app during development.
 

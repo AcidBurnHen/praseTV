@@ -1,9 +1,61 @@
 import { fetchBookmarks } from './bookmarks'
 import type { Bookmark } from './bookmarks'
 
-
+let focusedElement: HTMLElement  | null = null 
+let totalElements = 0
 let allBookmarks: Bookmark[] = []
+
+// ---------------- HELPERS ---------------- //
+function isEditableElement(element: HTMLElement | null = null): boolean {
+  if (element === null) {
+    element = document.activeElement as HTMLElement
+  }
+
+  const tag = element.tagName;
+  return (
+    element.isContentEditable ||
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT"
+  );
+}
+
+function getFaviconUrls(bookmarkUrl: string) {
+  const { origin } = new URL(bookmarkUrl);
+  if (!origin) {
+    return [null, null]
+  }
+
+  return [`${origin}/favicon.ico`, `https://www.google.com/s2/favicons?sz=64&domain=${origin}`];
+}
+
+
+// ----------- SEARCH INPUT ----------- //
 const searchInput = document.getElementById('bookmark-search') as HTMLInputElement
+
+function handleInputKeyboardControls(e: KeyboardEvent) {
+  if (!e.ctrlKey || !focusedElement || focusedElement.id !== 'bookmark-search') {
+    return 
+  }
+
+  switch(e.key) {
+    case 'ArrowDown': {
+      e.preventDefault()
+      const newElementToFocus = document.getElementById(`bookmark-0`)
+      console.log("new element to focus: ", newElementToFocus)
+      if (newElementToFocus) {
+        toggleFocusedElement(newElementToFocus)
+      }
+      break 
+      
+    }
+  }
+}
+
+searchInput.addEventListener('focus', () => {
+  searchInput.focus()
+  toggleFocusedElement(searchInput)
+})
 
 function renderBookmarksWithFilters() {
   const query = searchInput.value.trim().toLowerCase()
@@ -23,18 +75,7 @@ function renderBookmarksWithFilters() {
 searchInput.addEventListener('input', renderBookmarksWithFilters)
 
 
-function getFaviconUrls(bookmarkUrl: string) {
-  const { origin } = new URL(bookmarkUrl);
-  if (!origin) {
-    return [null, null]
-  }
-
-  return [`${origin}/favicon.ico`, `https://www.google.com/s2/favicons?sz=64&domain=${origin}`];
-}
-
-let focusedElement: HTMLElement  | null = null 
-let totalElements = 0
-
+// -------------- BOOKMARKS -------------- //
 function getFocusedElementUrl(): null | string {
   if (!focusedElement) {
     return null 
@@ -51,10 +92,12 @@ function getFocusedElementUrl(): null | string {
 function toggleFocusedElement(elementToFocus: HTMLElement) {
   if (focusedElement) {
     focusedElement.classList.remove('active_focus')
+    focusedElement.blur()
   }
 
   focusedElement = elementToFocus
   focusedElement.classList.add('active_focus')
+  focusedElement.focus()
 }
 
 function reorderIdxOnBookmarks() {
@@ -70,21 +113,16 @@ function reorderIdxOnBookmarks() {
   }
 }
 
-function handleKeyboardControls (e: KeyboardEvent) {
-  if (!focusedElement && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-    const firstELement = document.getElementById('bookmark-0')
-    if (firstELement) {
-      toggleFocusedElement(firstELement)
-    }
+function handleBookmarkKeyboardControls (e: KeyboardEvent) {
+  if (!focusedElement || isEditableElement()) {
+    console.log("? ")
+    return 
   }
 
-  console.log("Key: ", e.key)
+  console.log("Here")
+
   switch (e.key) {
-    case 'Delete': {
-      if (!focusedElement) {
-        break 
-      }
-           
+    case 'Delete': {     
       window.postMessage({ action: 'deleteBookmark', id: focusedElement.dataset.bId }, '*')
 
       const deletedId = focusedElement.dataset.bId
@@ -120,13 +158,15 @@ function handleKeyboardControls (e: KeyboardEvent) {
       break 
     }
     case 'ArrowUp': {
-      if (!focusedElement) {
+      if (!focusedElement || focusedElement.id === 'bookmark-search') {
         break 
       }
-
+    
       const idx = Number(focusedElement.dataset.idx)
+      // In first element 
       if (idx < 4) {
-        break; 
+        toggleFocusedElement(searchInput)
+        break
       }
 
       const newIdx = idx - 4
@@ -138,9 +178,18 @@ function handleKeyboardControls (e: KeyboardEvent) {
       break
     }
     case 'ArrowDown': {
-      if (!focusedElement) {
+      console.log("Focused element.id: ", focusedElement.id)
+      if (e.ctrlKey && focusedElement.id == 'bookmark-search') {
+        e.preventDefault()
+        const newElementToFocus = document.getElementById(`bookmark-0`)
+        console.log("new element to focus: ", newElementToFocus)
+        if (newElementToFocus) {
+          toggleFocusedElement(newElementToFocus)
+        }
         break 
       }
+
+      console.log("Nothing")
 
       const idx = Number(focusedElement.dataset.idx)
       const gridCount = Number(Math.ceil(totalElements / 4))
@@ -170,10 +219,6 @@ function handleKeyboardControls (e: KeyboardEvent) {
       break 
     }
     case 'ArrowLeft': {
-      if (!focusedElement) {
-        break 
-      }
-
       const idx = Number(focusedElement.dataset.idx)
       if (idx < 1) {
         break; 
@@ -188,10 +233,6 @@ function handleKeyboardControls (e: KeyboardEvent) {
       break
     }
     case 'ArrowRight': {
-      if (!focusedElement) {
-        break 
-      }
-
       const idx = Number(focusedElement.dataset.idx)
       if (idx >= totalElements - 1) {
         break; 
@@ -208,7 +249,6 @@ function handleKeyboardControls (e: KeyboardEvent) {
   }
 }
 
-window.addEventListener('keydown', handleKeyboardControls)
 
 function render(bookmarks: Bookmark[]) {
   // console.log("BOokmarks: ", bookmarks)
@@ -285,6 +325,48 @@ function render(bookmarks: Bookmark[]) {
 
 }
 
+
+// ----------------- Global controls ----------------- // 
+function handleGlobalKeyboardControls(e: KeyboardEvent) {
+  if (!focusedElement && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+    const firstELement = document.getElementById('bookmark-0')
+    if (firstELement) {
+      toggleFocusedElement(firstELement)
+    }
+  }
+
+  if (focusedElement && focusedElement.id === 'bookmark-search') {
+    handleInputKeyboardControls(e)
+    return 
+  } 
+
+  handleBookmarkKeyboardControls(e)
+}
+window.addEventListener('keydown', handleGlobalKeyboardControls)
+
+function handleGlobalClcik(e: Event) {
+  const target = e.target as HTMLElement
+
+  // Check if click is outside input 
+  if (target !== searchInput && !searchInput.contains(target)) {
+    // If a bookmark exists, focus back on it
+    if (focusedElement && focusedElement.id !== 'bookmark-search') {
+      focusedElement.focus()
+      searchInput.blur()
+      return
+    }
+
+    const firstBookmark = document.getElementById('bookmark-0')
+    if (firstBookmark) {
+      toggleFocusedElement(firstBookmark)
+      searchInput.blur()
+    }
+  }
+}
+
+document.addEventListener('click', handleGlobalClcik)
+
+// ----------------- Init ----------------- //
 fetchBookmarks()
   .then((bm) => {
     allBookmarks = bm
