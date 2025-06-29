@@ -28,14 +28,25 @@ praseTV/
 └── Dockerfile  # Build all components
 ```
 
-## Local setup (Docker)
+## Local setup 
 1. Clone the repo and build the containers:
    ```bash
    git clone https://github.com/AcidBurn/prase.tv.git
    cd prase.tv
+   ```
+
+   You can either run 
+   ```bash 
    docker compose up --build
    ```
-2. Open `http://localhost` in a browser. The first run will initialise `prasetv.db` inside the container volume.
+
+   Or let the run script handle everything for you 
+   ```bash 
+   chmod +x run_prasetv.sh
+   ./run_prasetv.sh
+   ```
+
+2. Open `http://prase.tv` in a browser (or localhost if you went without run script). The first run will initialise `prasetv.db` inside the container volume.
 3. Install the extension from the `extension/` folder to sync your browser bookmarks.
 
 All data stays local and is served from SQLite. There are no external API calls.
