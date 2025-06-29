@@ -98,20 +98,39 @@ chrome.runtime.onMessage.addListener((msg) => {
     `;
     document.body.appendChild(wrapper);
 
-    // Event handlers
-    document.getElementById("prase_save").onclick = () => {
+    const saveBtn = document.getElementById("prase_save");
+    const cancelBtn = document.getElementById("prase_cancel");
+    const closeBtn = document.getElementById("prase_close");
+
+    const saveBookmark = () => {
       const title = document.getElementById("prase_title").value;
       const url = msg.url;
       chrome.runtime.sendMessage({ action: "createBookmark", title, url });
+      cleanup();
+    };
+
+    const cleanup = () => {
+      document.removeEventListener("keydown", onKeyDown);
       wrapper.remove();
     };
 
-    document.getElementById("prase_cancel").onclick = () => {
-      wrapper.remove(); 
+    const onKeyDown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        saveBookmark();
+      }
+      if (e.key === "Escape") {
+        // console.log("Escape")
+        e.preventDefault();
+        cleanup();
+      }
     };
 
-    document.getElementById("prase_close").onclick = () => {
-      wrapper.remove();
-    };
+    document.addEventListener("keydown", onKeyDown);
+
+    // Event handlers
+    saveBtn.onclick = saveBookmark;
+    cancelBtn.onclick = cleanup;
+    closeBtn.onclick = cleanup;
   }
 });
