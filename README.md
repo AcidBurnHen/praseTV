@@ -45,8 +45,10 @@ praseTV/
    chmod +x run_prasetv.sh
    ./run_prasetv.sh
    ```
+  The script uses `sudo` when installing Docker and will add your user to the `docker` group if needed. Make sure you run it as your regular user (not root) so the browser can launch correctly via DBus/X11.
 
-2. Open `http://prase.tv` in a browser (or localhost if you went without run script). The first run will initialise `prasetv.db` inside the container volume.
+2. Open `http://prase.tv` in a browser. The first run will initialise `prasetv.db` inside the container volume. The helper script automatically adds a host entry for `prase.tv` so you don't need to edit `/etc/hosts` yourself.
+
 3. Install the extension from the `extension/` folder to sync your browser bookmarks.
 
 All data stays local and is served from SQLite. There are no external API calls.
@@ -107,7 +109,9 @@ Then add at the bottom:
 127.0.0.1    prase.tv
 ```
 
-(Or you can set up dnsmasq)
+(Or you can set up dnsmasq) 
+
+The `run_prasetv.sh` helper already ensures this entry exists, so you normally don't have to add it manually.
 
 Now you can open your browser and visit:\
 👉 [**http://prase.tv**](http://prase.tv)
